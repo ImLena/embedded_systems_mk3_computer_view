@@ -33,9 +33,10 @@ val1 = 0
 val2 = 0
 val3 = 0
 val4 = 0
-
+ans = ''
 def process(frame):
     global val1, val2, val3, val4
+    global ans
     rect_size = 100
     h_sensivity = 20
     s_h = 255
@@ -89,45 +90,36 @@ def process(frame):
     pink_rate = np.count_nonzero(mask_pink) / (rect_size * rect_size)
 
     org = end_point
-    org2 = end_point2[0] - 70, end_point2[1] + 20
-    org3 = end_point3[0] - 70, end_point3[1] + 20
-    org4 = end_point4[0] - 70, end_point4[1] + 20
     font = cv2.FONT_HERSHEY_SIMPLEX
     fontScale = 0.7
 
-    if blue_rate > 0.9:
+    if blue_rate > 0.9 and not val1:
         val1 = 1
-        text = cv2.putText(rect, ' OK (blue) ', org, font, fontScale, color, thickness, cv2.LINE_AA)
-    else:
-        text = cv2.putText(rect, '  ', org, font, fontScale, color, thickness, cv2.LINE_AA)
+        ans = str(ans) + ' Blue, '
 
-    if green_rate > 0.9 and val1:
+    if green_rate > 0.9 and val1 and not val2:
         val2 = 1
-        text2 = cv2.putText(rect2, ' OK (green) ', org2, font, fontScale, color, thickness, cv2.LINE_AA)
-        rect2 = cv2.rectangle(frame, start_point2, end_point2, color, thickness)
-    else:
-        text2 = cv2.putText(rect2, '  ', org2, font, fontScale, color, thickness, cv2.LINE_AA)
+        ans = str(ans) + 'Green, '
 
-    if lightblue_rate > 0.9 and val1 and val2:
+
+    if lightblue_rate > 0.9 and val1 and val2 and not val3:
         val3 = 1
-        text3 = cv2.putText(rect3, ' OK (lightblue) ', org3, font, fontScale, color, thickness, cv2.LINE_AA)
-    else:
-        text3 = cv2.putText(rect3, '  ', org3, font, fontScale, color, thickness, cv2.LINE_AA)
+        ans = str(ans) + 'Sky Blue, '
 
-    if pink_rate > 0.9 and val1 and val2 and val3:
+    if pink_rate > 0.9 and val1 and val2 and val3 and not val4:
         val4 = 1
-        text4 = cv2.putText(rect4, ' OK (pink) ', org4, font, fontScale, color, thickness, cv2.LINE_AA)
-    else:
-        text4 = cv2.putText(rect4, '  ', org3, font, fontScale, color, thickness, cv2.LINE_AA)
+        ans = str(ans) + 'Pink '
 
     av_hue = np.average(mask_frame[:, :, 0])
     av_sat = np.average(mask_frame[:, :, 1])
     av_val = np.average(mask_frame[:, :, 2])
     average = [int(av_hue), int(av_sat), int(av_val)]
 
+    text = cv2.putText(rect, str(ans),  (int(height / 2 + rect_size / 2 - 300), int(width / 2 + rect_size / 2) + 50), font, fontScale, color, thickness, cv2.LINE_AA)
+
     if val1 and val2 and val3 and val4:
         text = cv2.putText(frame, 'Right password',
-                           (int(height / 2 + rect_size / 2 - 180), int(width / 2 + rect_size / 2) + 50), font,
+                           (int(height / 2 + rect_size / 2 - 180), int(width / 2 + rect_size / 2) + 100), font,
                            fontScale, (110, 150, 50), thickness, cv2.LINE_AA)
 
     text = cv2.putText(rect, str(average) + " " + str(blue_rate), (10, 50), font, fontScale, color, thickness,
@@ -167,6 +159,7 @@ while (cap.isOpened()):
         val2 = 0
         val3 = 0
         val4 = 0
+        ans = ''
 
 # Release the Cap and Video
 cap.release()
