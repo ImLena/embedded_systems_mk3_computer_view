@@ -101,7 +101,6 @@ def process(frame):
     else:
         text = cv2.putText(rect, '  ', org, font, fontScale, color, thickness, cv2.LINE_AA)
 
-    """again """
     if green_rate > 0.9 and val1:
         val2 = 1
         text2 = cv2.putText(rect2, ' OK (green) ', org2, font, fontScale, color, thickness, cv2.LINE_AA)
@@ -138,6 +137,7 @@ def process(frame):
 
 
 print('Press 4 to Quit the Application\n')
+print('Press 5 to Restart the Application\n')
 
 # Open Default Camera
 cap = cv2.VideoCapture(0)  # gstreamer_pipeline(flip_method=4), cv2.CAP_GSTREAMER)
@@ -160,6 +160,13 @@ while (cap.isOpened()):
         # Quit
         print('Good Bye!')
         break
+
+    k2 = cv2.waitKey(1) & 0xFF
+    if k2 == 53:
+        val1 = 0
+        val2 = 0
+        val3 = 0
+        val4 = 0
 
 # Release the Cap and Video
 cap.release()
